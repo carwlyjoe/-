@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>数据处理工具</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+  <h1 class="text-center">数据处理工具</h1>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="dataInput" class="form-label">粘贴你的数据：</label>
+        <textarea class="form-control" id="dataInput" rows="6" placeholder="在此粘贴数据"></textarea>
+      </div>
+      <button id="processButton" class="btn btn-primary">空格/制表符转逗号</button>
+      <button id="reverseButton" class="btn btn-secondary">逗号转空格</button>
+      <button id="quoteButton" class="btn btn-success">添加单引号</button>
+    </div>
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="processedOutput" class="form-label">处理后的数据：</label>
+        <textarea class="form-control" id="processedOutput" rows="6" readonly></textarea>
+      </div>
+      <button id="copyButton" class="btn btn-success" disabled>复制结果</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const processButton = document.getElementById('processButton');
+  const reverseButton = document.getElementById('reverseButton');
+  const quoteButton = document.getElementById('quoteButton');
+  const copyButton = document.getElementById('copyButton');
+  const dataInput = document.getElementById('dataInput');
+  const processedOutput = document.getElementById('processedOutput');
+
+  processButton.addEventListener('click', () => processInput(/\s+/g, ','));
+  reverseButton.addEventListener('click', () => processInput(/,+/g, ' '));
+  quoteButton.addEventListener('click', addQuotes);
+  copyButton.addEventListener('click', copyOutput);
+
+  function processInput(regex, newDelimiter) {
+    let inputData = dataInput.value.trim();
+    processedOutput.value = inputData.replace(regex, newDelimiter);
+    processedOutput.removeAttribute('readonly');
+    copyButton.disabled = false;
+  }
+
+  function addQuotes() {
+    let inputData = dataInput.value.trim();
+    let quotedData = inputData.split(',').map(item => "'" + item.trim() + "'");
+    processedOutput.value = quotedData.join(', ');
+    processedOutput.removeAttribute('readonly');
+    copyButton.disabled = false;
+  }
+
+  function copyOutput() {
+    processedOutput.select();
+    document.execCommand('copy');
+    alert('处理后的数据已复制到剪贴板。');
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
